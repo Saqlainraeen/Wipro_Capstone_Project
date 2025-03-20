@@ -1,46 +1,80 @@
 package com.service;
 
 import java.util.List;
-import java.util.Optional;
+
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dto.BlogDto;
 import com.entity.BlogEntity;
 import com.exceptions.ResourceNotFoundException;
 import com.repository.BlogRepository;
 @Service
 public class BlogService {
-	@Autowired
-	private BlogRepository blogRepository;
-	
-	public BlogEntity createBlog(BlogEntity blog) {
-		return blogRepository.save(blog);
-	}
-	
-	public List<BlogEntity> getAllBlogs(){
-		return blogRepository.findAll();
-	}
-	
-	public BlogEntity getBlogById(Long id) throws Exception {
-		Optional<BlogEntity>blog=blogRepository.findById(id);
-		if (blog.isPresent()) {
-			return blog.get();
-			
-		}else {
-			throw new ResourceNotFoundException("Blog with ID"+id+"not found");
-		}
-	}
-	public BlogEntity updateBlog(Long id,BlogEntity updatedBlog) throws Exception {
-		BlogEntity existingBlog=getBlogById(id);
-		existingBlog.setTitle(updatedBlog.getTitle());
-		existingBlog.setContent(updatedBlog.getContent());
-		return blogRepository.save(existingBlog);
-		
-	}
-	public void deleteBlog(Long id) throws Exception {
-		BlogEntity blog=getBlogById(id);
-		blogRepository.delete(blog);
-	}
 
+    private final BlogRepository blogRepository;
+
+    @Autowired
+    public BlogService(BlogRepository blogRepository) {
+        this.blogRepository = blogRepository;
+    }
+
+    // Convert Entity to DTO
+    private BlogDto mapEntityToDto(BlogEntity blogEntity) {
+        BlogDto blogDto = new BlogDto();
+        blogDto.setId(blogEntity.getId());
+        blogDto.setTitle(blogEntity.getTitle());
+        blogDto.setContent(blogEntity.getContent());
+        return blogDto;
+    }
+
+    // Convert DTO to Entity
+    private BlogEntity mapDtoToEntity(BlogDto blogDto) {
+        BlogEntity blogEntity = new BlogEntity();
+        blogEntity.setId(blogDto.getId());
+        blogEntity.setTitle(blogDto.getTitle());
+        blogEntity.setContent(blogDto.getContent());
+        return blogEntity;
+    }
+
+    // Create Blog
+    public BlogDto createBlog(BlogDto blogDto) {
+        BlogEntity blogEntity = mapDtoToEntity(blogDto);
+        BlogEntity savedBlog = blogRepository.save(blogEntity);
+        return mapEntityToDto(savedBlog);
+    }
+
+    // Get All Blogs
+    public List<BlogDto> findAll() {
+        return blogRepository.findAll()
+                .stream()
+                .map(this::mapEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+    // Get Blog By Id
+    public BlogDto getBlogById(Long id) {
+        BlogEntity blog = blogRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Blog not found"));
+        return mapEntityToDto(blog);
+    }
+
+    // Update Blog
+    public BlogDto updateBlog(Long id, BlogDto blogDto) {
+        BlogEntity existingBlog = blogRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Blog not found"));
+        existingBlog.setTitle(blogDto.getTitle());
+        existingBlog.setContent(blogDto.getContent());
+        BlogEntity updatedBlog = blogRepository.save(existingBlog);
+        return mapEntityToDto(updatedBlog);
+    }
+
+    // Delete Blog
+    public void deleteBlog(Long id) {
+        BlogEntity blog = blogRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Blog not found"));
+        blogRepository.delete(blog);
+    }
 }

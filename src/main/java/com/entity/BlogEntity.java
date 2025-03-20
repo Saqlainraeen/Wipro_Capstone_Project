@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="blogs")
@@ -17,11 +19,15 @@ public class BlogEntity {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@NotBlank(message="Blog title cannot be empty")
+	@Size(min=3,max=100,message="Title must be 3-100 characters")
 	private String title;
 	
+	@NotBlank(message="Blog content cannot be empty")
+	@Size(min=3,max=100,message="Content must be 3-100 characters")
 	private String content;
-	 @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	 @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<CommentEntity> comments;
 
 	public BlogEntity(Long id, String title, String content) {
