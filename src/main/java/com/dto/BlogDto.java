@@ -1,5 +1,7 @@
 package com.dto;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -13,7 +15,7 @@ public class BlogDto {
 	@NotBlank(message="Content cannot be empty")
 	@Size(min=3,max=200,message="Content must be 3-100 characters")
 	private String content;
-
+	private LocalDateTime createdAt;
 	public BlogDto(Long id, String title, String content) {
 		super();
 		this.id = id;

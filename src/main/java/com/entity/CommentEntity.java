@@ -1,5 +1,10 @@
 package com.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +21,9 @@ public class CommentEntity {
 	private Long id;
 	
 	private String text;
-	
+	 @Column(name = "created_at", updatable = false, nullable = false)
+	    @CreationTimestamp
+	    private LocalDateTime createdAt;
 	@ManyToOne
 	@JoinColumn(name="blog_id",nullable=false)
 	private BlogEntity blog;
@@ -56,7 +63,9 @@ public class CommentEntity {
 	public void setBlogEntity(BlogEntity blog) {
 		this.blog= blog;
 	}
-	
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 	
 
 

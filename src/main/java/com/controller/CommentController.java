@@ -18,8 +18,13 @@ import com.entity.CommentEntity;
 import com.exceptions.ResourceNotFoundException;
 import com.service.CommentService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/comments")
+@Tag(name = "Comment Management", description = "Operations related to blog comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -30,12 +35,14 @@ public class CommentController {
 
     // Add Comment
     @PostMapping
-    public ResponseEntity<CommentDto> addComment(@RequestBody CommentDto commentDto) {
+    @Operation(summary = "Add a Comment", description = "Creates a new comment for a blog post.")
+    public ResponseEntity<CommentDto> addComment(@Valid@RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentService.addComment(commentDto));
     }
     //Get All comments
     
     @GetMapping
+    @Operation(summary = "View All Comments", description = "Retrieves all comments for a specific blog.")
     public ResponseEntity<List<CommentDto>> getAllComments() {
         return ResponseEntity.ok(commentService.findAllComments());
     }
@@ -44,12 +51,14 @@ public class CommentController {
     
     // Get Comments by Blog ID
     @GetMapping("/blog/{blogId}")
+    @Operation(summary = "View All Comments with specific blog ID", description = "Retrieves comments for a specific blog.")
     public ResponseEntity<List<CommentDto>> getCommentsByBlogId(@PathVariable Long blogId) throws Exception {
         return ResponseEntity.ok(commentService.getCommentsByBlogId(blogId));
     }
 
     // Delete Comment by ID
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a Comment", description = "Deletes a comment by its ID.")
     public ResponseEntity<String> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
         return ResponseEntity.ok("Comment deleted successfully");

@@ -1,6 +1,9 @@
 package com.dto;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class CommentDto {
@@ -9,9 +12,9 @@ public class CommentDto {
 	@NotBlank(message="Comment cannot be empty")
 	@Size(min=3,max=200,message="Comment must 3-200 characters")
 	private String text;
-	@NotBlank(message="blogId cannot be empty")
+	@NotNull(message="blogId cannot be Null")
 	private Long blogId;
-
+	private LocalDateTime createdAt;
 	public CommentDto(Long id, String text, Long blogId) {
 		super();
 		this.id = id;

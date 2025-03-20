@@ -57,14 +57,14 @@ public class BlogService {
     // Get Blog By Id
     public BlogDto getBlogById(Long id) {
         BlogEntity blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+                .orElseThrow(() -> new RuntimeException("Blog not found with ID: "+id));
         return mapEntityToDto(blog);
     }
 
     // Update Blog
     public BlogDto updateBlog(Long id, BlogDto blogDto) {
         BlogEntity existingBlog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+                .orElseThrow(() -> new RuntimeException("Blog not found with id: "+id));
         existingBlog.setTitle(blogDto.getTitle());
         existingBlog.setContent(blogDto.getContent());
         BlogEntity updatedBlog = blogRepository.save(existingBlog);
@@ -72,9 +72,9 @@ public class BlogService {
     }
 
     // Delete Blog
-    public void deleteBlog(Long id) {
+    public void deleteBlog(Long id) {    	
         BlogEntity blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+                .orElseThrow(() -> new RuntimeException("Blog not found with id: "+id));
         blogRepository.delete(blog);
     }
 }

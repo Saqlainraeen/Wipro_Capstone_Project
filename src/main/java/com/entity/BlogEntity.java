@@ -1,8 +1,14 @@
 package com.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +35,14 @@ public class BlogEntity {
 	private String content;
 	 @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<CommentEntity> comments;
-
+	 
+	 @Column(name = "created_at", updatable = false, nullable = false)
+	    
+ 	@CreationTimestamp
+    private LocalDateTime createdAt;
+	
+	
+	 
 	public BlogEntity(Long id, String title, String content) {
 		super();
 		this.id = id;
@@ -73,6 +86,12 @@ public class BlogEntity {
 	public void setComments(List<CommentEntity> comments) {
 		this.comments = comments;
 	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	
 
 	
 	

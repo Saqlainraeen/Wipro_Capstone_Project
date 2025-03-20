@@ -64,7 +64,7 @@ public class CommentService {
     // Delete Comment by ID
     public void deleteComment(Long id) {
         CommentEntity comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new RuntimeException("Comment not found with id: "+id));
         commentRepository.delete(comment);
     }
 
