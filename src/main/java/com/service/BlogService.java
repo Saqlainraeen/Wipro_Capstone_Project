@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.dto.BlogDto;
 import com.entity.BlogEntity;
+import com.exceptions.InvalidIdException;
 import com.exceptions.ResourceNotFoundException;
 import com.repository.BlogRepository;
 @Service
@@ -38,6 +39,13 @@ public class BlogService {
         blogEntity.setContent(blogDto.getContent());
         return blogEntity;
     }
+    
+ // Validate ID (no null or negative)
+    private void validateId(Long id) {
+        if (id == null || id < 0) {
+            throw new InvalidIdException("ID must be a positive number. Given: " + id);
+        }
+    }
 
     // Create Blog
     public BlogDto createBlog(BlogDto blogDto) {
@@ -55,16 +63,18 @@ public class BlogService {
     }
 
     // Get Blog By Id
-    public BlogDto getBlogById(Long id) {
-        BlogEntity blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found with ID: "+id));
+    public BlogDto getBlogById(Long id) throws Exception {
+        validateId(id);
+    	BlogEntity blog = blogRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with ID: "+id));
         return mapEntityToDto(blog);
     }
 
     // Update Blog
-    public BlogDto updateBlog(Long id, BlogDto blogDto) {
-        BlogEntity existingBlog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found with id: "+id));
+    public BlogDto updateBlog(Long id, BlogDto blogDto) throws ResourceNotFoundException {
+        validateId(id);
+    	BlogEntity existingBlog = blogRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with id: "+id));
         existingBlog.setTitle(blogDto.getTitle());
         existingBlog.setContent(blogDto.getContent());
         BlogEntity updatedBlog = blogRepository.save(existingBlog);
@@ -72,9 +82,10 @@ public class BlogService {
     }
 
     // Delete Blog
-    public void deleteBlog(Long id) {    	
-        BlogEntity blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found with id: "+id));
+    public void deleteBlog(Long id) throws Exception {    	
+        validateId(id);
+    	BlogEntity blog = blogRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Oops!Blog not found with id: "+id));
         blogRepository.delete(blog);
     }
 }

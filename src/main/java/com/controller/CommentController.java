@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/comments")
-@Tag(name = "Comment Management", description = "Operations related to blog comments")
+@Tag(name = "Comment Management", description = "CRUD Operations related to blog comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -36,7 +36,7 @@ public class CommentController {
     // Add Comment
     @PostMapping
     @Operation(summary = "Add a Comment", description = "Creates a new comment for a blog post.")
-    public ResponseEntity<CommentDto> addComment(@Valid@RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentDto> addComment(@Valid@RequestBody CommentDto commentDto) throws Exception {
         return ResponseEntity.ok(commentService.addComment(commentDto));
     }
     //Get All comments
@@ -59,7 +59,7 @@ public class CommentController {
     // Delete Comment by ID
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a Comment", description = "Deletes a comment by its ID.")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id) {
+    public ResponseEntity<String> deleteComment(@PathVariable Long id) throws Exception {
         commentService.deleteComment(id);
         return ResponseEntity.ok("Comment deleted successfully");
     }

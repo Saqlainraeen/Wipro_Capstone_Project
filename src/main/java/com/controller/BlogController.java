@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dto.BlogDto;
 import com.entity.BlogEntity;
+import com.exceptions.ResourceNotFoundException;
 import com.service.BlogService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/blogs")
@@ -30,11 +32,11 @@ public class BlogController {
         this.blogService = blogService;
     }
 
-    // Create Blog
+    // Create my Blog
     
     @PostMapping
     @Operation(summary = "Create a New Blog", description = "Add a new blog post to the system.")
-    public ResponseEntity<BlogDto> createBlog(@RequestBody BlogDto blogDto) {
+    public ResponseEntity<BlogDto> createBlog(@Valid@RequestBody BlogDto blogDto) {
         return ResponseEntity.ok(blogService.createBlog(blogDto));
     }
 
@@ -48,21 +50,21 @@ public class BlogController {
     // Get Blog by ID
     @GetMapping("/{id}")
     @Operation(summary = "Get Blog by ID", description = "Retrieve a specific blog post by its unique ID.")
-    public ResponseEntity<BlogDto> getBlogById(@PathVariable Long id) {
+    public ResponseEntity<BlogDto> getBlogById(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(blogService.getBlogById(id));
     }
 
     // Update Blog
     @PutMapping("/{id}")
     @Operation(summary = "Update Blog", description = "Modify an existing blog post.")
-    public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) {
+    public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @Valid@RequestBody BlogDto blogDto) throws Exception {
         return ResponseEntity.ok(blogService.updateBlog(id, blogDto));
     }
 
     // Delete Blog
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Blog", description = "Remove a blog post from the system.")
-    public ResponseEntity<String> deleteBlog(@PathVariable Long id) {
+    public ResponseEntity<String> deleteBlog(@PathVariable Long id) throws Exception {
         blogService.deleteBlog(id);
         return ResponseEntity.ok("Blog deleted successfully");
     }

@@ -33,12 +33,12 @@ public class BlogEntity {
 	@NotBlank(message="Blog content cannot be empty")
 	@Size(min=3,max=100,message="Content must be 3-100 characters")
 	private String content;
-	 @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<CommentEntity> comments;
 	 
-	 @Column(name = "created_at", updatable = false, nullable = false)
-	    
- 	@CreationTimestamp
+	@Column(name = "created_at", updatable = false, nullable = false)
+	@CreationTimestamp
     private LocalDateTime createdAt;
 	
 	

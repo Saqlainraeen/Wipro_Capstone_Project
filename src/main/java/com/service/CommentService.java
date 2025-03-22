@@ -9,6 +9,7 @@ import com.dto.BlogDto;
 import com.dto.CommentDto;
 import com.entity.BlogEntity;
 import com.entity.CommentEntity;
+import com.exceptions.InvalidIdException;
 import com.exceptions.ResourceNotFoundException;
 import com.repository.BlogRepository;
 import com.repository.CommentRepository;
@@ -23,6 +24,12 @@ public class CommentService {
         this.commentRepository = commentRepository;
         this.blogRepository = blogRepository;
     }
+    
+    private void validateId(Long id) {
+        if (id == null || id < 0) {
+            throw new InvalidIdException("ID must be a positive number. Given: " + id);
+        }
+    }
 
     // Convert Entity to DTO
     private CommentDto mapEntityToDto(CommentEntity commentEntity) {
@@ -30,14 +37,15 @@ public class CommentService {
     }
 
     // Convert DTO to Entity
-    private CommentEntity mapDtoToEntity(CommentDto commentDto) {
-        BlogEntity blog = blogRepository.findById(commentDto.getBlogId())
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+    private CommentEntity mapDtoToEntity(CommentDto commentDto) throws Exception {
+        validateId(commentDto.getBlogId());
+    	BlogEntity blog = blogRepository.findById(commentDto.getBlogId())
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with Id"+commentDto.getBlogId()));
         return new CommentEntity(null, commentDto.getText(), blog);
     }
 
     // Add Comment
-    public CommentDto addComment(CommentDto commentDto) {
+    public CommentDto addComment(CommentDto commentDto) throws Exception  {
         CommentEntity commentEntity = mapDtoToEntity(commentDto);
         CommentEntity savedComment = commentRepository.save(commentEntity);
         return mapEntityToDto(savedComment);
@@ -51,8 +59,10 @@ public class CommentService {
     }
 
     // Get Comments by Blog ID
+    
     public List<CommentDto> getCommentsByBlogId(Long blogId) throws ResourceNotFoundException {
-        if (!blogRepository.existsById(blogId)) {
+    	validateId(blogId);
+    	if (!blogRepository.existsById(blogId)) {
             throw new ResourceNotFoundException("Blog not found with ID: " + blogId);
         }
         return commentRepository.findByBlogId(blogId)
@@ -62,9 +72,10 @@ public class CommentService {
     }
 
     // Delete Comment by ID
-    public void deleteComment(Long id) {
-        CommentEntity comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found with id: "+id));
+    public void deleteComment(Long id) throws Exception {
+    	validateId(id);
+    	CommentEntity comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: "+id));
         commentRepository.delete(comment);
     }
 
